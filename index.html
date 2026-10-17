@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A fun English learning activity about healthy food for second-grade students.">
+<title>Healthy Food Adventure | Grade 2</title>
+<style>
+:root{--green:#247a52;--dark:#173d32;--mint:#eaf8ed;--yellow:#ffcf5a;--coral:#ff806e;--blue:#dff3ff;--white:#fff;--shadow:0 8px 24px #173d3214}
+*{box-sizing:border-box}body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;color:var(--dark);background:#f7fcf5;line-height:1.5}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid #2563eb;outline-offset:3px}.wrap{width:min(1050px,92%);margin:auto}.hero{background:linear-gradient(135deg,#dff8dc,#fff2c7);padding:28px 0 34px;border-bottom:5px solid #b6e4a9}.topline{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.pill{background:#fff;padding:7px 13px;border-radius:99px;font-weight:800;font-size:.9rem}.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:20px}.hero h1{font-size:clamp(2.3rem,6vw,4.2rem);line-height:1.02;margin:22px 0 12px;color:var(--green)}.hero p{font-size:1.15rem;max-width:590px}.food-art{font-size:clamp(4rem,11vw,7rem);text-align:center;background:#ffffff9c;border-radius:35px;padding:20px 8px;box-shadow:var(--shadow)}.primary{border:0;background:var(--green);color:white;font-weight:800;padding:12px 19px;border-radius:14px;box-shadow:0 4px 0 #18583a}.primary:hover{background:#18583a}.section{padding:30px 0}.section h2{font-size:clamp(1.6rem,4vw,2.25rem);margin:0 0 8px}.sub{margin:0 0 20px;color:#48695b}.food-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.food-card{background:white;border:2px solid #e1efdf;border-radius:20px;padding:17px 12px;text-align:center;box-shadow:var(--shadow)}.food-card .emoji{font-size:3rem;display:block}.food-card h3{margin:7px 0 0;font-size:1.1rem}.food-card p{margin:2px 0;color:#547164;font-size:.9rem}.tag{display:inline-block;margin-top:8px;background:var(--mint);padding:4px 9px;border-radius:99px;color:var(--green);font-size:.78rem;font-weight:800}.say{background:#fff0c4;border-radius:18px;padding:17px 20px;margin-top:17px;font-size:1.05rem}.activity{background:white;border:2px solid #e4efe2;border-radius:24px;padding:22px;box-shadow:var(--shadow)}.activity-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.counter{font-weight:800;background:var(--blue);border-radius:99px;padding:6px 12px}.question{font-size:1.25rem;font-weight:800;margin:18px 0}.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.choice{border:2px solid #dce9de;border-radius:15px;background:#fbfffa;padding:14px;font-weight:800;text-align:left;color:var(--dark)}.choice:hover{border-color:var(--green);background:var(--mint)}.choice .emoji{font-size:1.7rem;margin-right:8px}.choice:disabled{cursor:default;opacity:.85}.feedback{font-weight:800;min-height:30px;margin:15px 0 5px}.progress{height:10px;background:#e7efe6;border-radius:99px;overflow:hidden;margin:12px 0}.bar{height:100%;width:0;background:var(--green);transition:width .25s}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.secondary{border:2px solid var(--green);color:var(--green);background:white;font-weight:800;padding:10px 16px;border-radius:13px}.plate-area{display:grid;grid-template-columns:1fr 1fr;gap:16px}.plate{min-height:155px;border:3px dashed #a8c9aa;border-radius:22px;padding:16px;background:#f2fff1}.plate h3{margin:0 0 10px}.food-buttons{display:flex;flex-wrap:wrap;gap:8px}.food-pick{border:1px solid #cbdccc;background:white;border-radius:12px;padding:8px 11px;font-weight:700}.food-pick.selected{background:#d8f4d8;border-color:var(--green)}.result{font-weight:800;margin-top:12px}.footer{background:var(--dark);color:#effff1;padding:22px 0;text-align:center}.footer p{margin:4px}.small{font-size:.9rem;color:#557364}
+@media(max-width:700px){.hero-grid{grid-template-columns:1fr}.food-art{padding:10px}.food-grid{grid-template-columns:repeat(2,1fr)}.plate-area{grid-template-columns:1fr}.hero h1{margin-top:15px}}@media(max-width:420px){.options{grid-template-columns:1fr}.activity{padding:16px}}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="wrap">
+<div class="topline"><span class="pill">🍎 ENGLISH • GRADE 2</span><span class="pill">Learn • Play • Grow!</span></div>
+<div class="hero-grid"><div><h1>Healthy Food Adventure!</h1><p>Let’s learn food words in English and discover how healthy food helps us grow strong.</p><button class="primary" onclick="document.getElementById('learn').scrollIntoView({behavior:'smooth'})">Let’s start! 🚀</button></div><div class="food-art" aria-label="Fruit and vegetables">🍎 🥦 🍌<br>🥕 🍓 🥛</div></div>
+</div>
+</header>
+<main>
+<section class="section wrap" id="learn">
+<h2>1. Meet the healthy foods 🥑</h2><p class="sub">Read the word aloud. / Lee la palabra en voz alta.</p>
+<div class="food-grid">
+<article class="food-card"><span class="emoji">🍎</span><h3>Apple</h3><p>Manzana</p><span class="tag">FRUIT</span></article>
+<article class="food-card"><span class="emoji">🍌</span><h3>Banana</h3><p>Banano</p><span class="tag">FRUIT</span></article>
+<article class="food-card"><span class="emoji">🍓</span><h3>Strawberry</h3><p>Fresa</p><span class="tag">FRUIT</span></article>
+<article class="food-card"><span class="emoji">🥕</span><h3>Carrot</h3><p>Zanahoria</p><span class="tag">VEGETABLE</span></article>
+<article class="food-card"><span class="emoji">🥦</span><h3>Broccoli</h3><p>Brócoli</p><span class="tag">VEGETABLE</span></article>
+<article class="food-card"><span class="emoji">🌽</span><h3>Corn</h3><p>Maíz</p><span class="tag">VEGETABLE</span></article>
+<article class="food-card"><span class="emoji">🥚</span><h3>Egg</h3><p>Huevo</p><span class="tag">PROTEIN</span></article>
+<article class="food-card"><span class="emoji">🥛</span><h3>Milk</h3><p>Leche</p><span class="tag">DAIRY</span></article>
+</div>
+<div class="say"><strong>🗣️ Say it!</strong> “I like apples.” 🍎 &nbsp; “I like carrots.” 🥕<br><span class="small">¡Dilo en inglés! Puedes cambiar el alimento: “I like bananas.”</span></div>
+</section>
+<section class="section" style="background:#eff9ed"><div class="wrap">
+<h2>2. Food quiz 🎯</h2><p class="sub">Choose the correct answer. / Escoge la respuesta correcta.</p>
+<div class="activity"><div class="activity-head"><strong>Ready, food explorer?</strong><span class="counter" id="counter">Question 1 of 5</span></div><div class="progress" aria-label="Quiz progress"><div class="bar" id="bar"></div></div><div class="question" id="question">Which food is a fruit? / ¿Cuál es una fruta?</div><div class="options" id="options"></div><div class="feedback" id="feedback" role="status" aria-live="polite"></div><div class="actions"><button class="primary" id="next" hidden>Next ➜</button><button class="secondary" id="restart" hidden>Play again ↻</button></div></div>
+</div></section>
+<section class="section wrap">
+<h2>3. Make a healthy plate! 🍽️</h2><p class="sub">Tap foods to add them to your plate. Try to choose different kinds of healthy food.</p>
+<div class="food-buttons" id="foodButtons"></div>
+<div class="plate-area" style="margin-top:16px"><div class="plate"><h3>My healthy plate</h3><div id="plateItems">Your plate is empty. / Tu plato está vacío.</div></div><div class="plate"><h3>Say a sentence 🗣️</h3><p id="sentence">I like ______.</p><p class="small">Choose a food and say the sentence aloud.</p><button class="secondary" id="clearPlate">Clear plate</button></div></div>
+<div class="say"><strong>Remember:</strong> Eat a variety of foods, drink water, and enjoy meals with your family. Healthy food helps your body grow! 💚</div>
+</section>
+</main>
+<footer class="footer"><div class="wrap"><p><strong>🌟 Great job, food explorer!</strong></p><p>You learned healthy food words in English.</p><p>Learning resource • Grade 2 • Healthy Food</p></div></footer>
+<script>
+const questions=[
+{q:"Which food is a fruit? / ¿Cuál es una fruta?",opts:[["🥦","Broccoli"],["🍎","Apple"],["🥚","Egg"],["🥕","Carrot"]],a:1,why:"Yes! An apple is a fruit. / ¡Sí! La manzana es una fruta."},
+{q:"Which food is a vegetable? / ¿Cuál es una verdura?",opts:[["🍌","Banana"],["🥛","Milk"],["🥕","Carrot"],["🍓","Strawberry"]],a:2,why:"Correct! A carrot is a vegetable. / ¡Correcto! La zanahoria es una verdura."},
+{q:"What do we drink? / ¿Qué bebemos?",opts:[["🥛","Milk"],["🌽","Corn"],["🍎","Apple"],["🥦","Broccoli"]],a:0,why:"Great! We can drink milk and water. / ¡Muy bien! Podemos beber leche y agua."},
+{q:"Which food helps make a varied meal? / ¿Cuál ayuda a tener una comida variada?",opts:[["🍬","Candy"],["🥦","Broccoli"],["🍭","Lollipop"],["🍰","Cake"]],a:1,why:"Yes! Broccoli is a vegetable. Try different foods. / ¡Sí! El brócoli es una verdura."},
+{q:"Complete: I like _____. / Completa: Me gusta _____.",opts:[["🍎","apples"],["🏀","basketballs"],["✏️","pencils"],["🚗","cars"]],a:0,why:"Wonderful! “I like apples.” / ¡Excelente! “Me gustan las manzanas.”"}
+];
+let index=0,score=0,answered=false;
+const questionEl=document.getElementById("question"),optionsEl=document.getElementById("options"),feedbackEl=document.getElementById("feedback"),counterEl=document.getElementById("counter"),bar=document.getElementById("bar"),next=document.getElementById("next"),restart=document.getElementById("restart");
+function renderQuestion(){answered=false;const item=questions[index];counterEl.textContent="Question "+(index+1)+" of "+questions.length;bar.style.width=(index/questions.length*100)+"%";questionEl.textContent=item.q;feedbackEl.textContent="";optionsEl.innerHTML="";next.hidden=true;item.opts.forEach((opt,i)=>{const b=document.createElement("button");b.className="choice";b.innerHTML='<span class="emoji">'+opt[0]+'</span>'+opt[1];b.addEventListener("click",()=>choose(i,b));optionsEl.appendChild(b)});}
+function choose(choice,button){if(answered)return;answered=true;const item=questions[index];const buttons=[...optionsEl.querySelectorAll("button")];buttons.forEach(b=>b.disabled=true);if(choice===item.a){score++;button.style.borderColor="#247a52";button.style.background="#dff7df";feedbackEl.textContent="✅ "+item.why}else{button.style.borderColor="#d96b5e";button.style.background="#fff0ed";buttons[item.a].style.borderColor="#247a52";buttons[item.a].style.background="#dff7df";feedbackEl.textContent="💡 Not quite. "+item.why}bar.style.width=((index+1)/questions.length*100)+"%";if(index<questions.length-1){next.hidden=false}else{counterEl.textContent="Quiz complete!";questionEl.textContent="You scored "+score+" out of "+questions.length+"! "+(score>=4?"Amazing work! 🌟":"Good try! Practice and play again! 💚");next.hidden=true;restart.hidden=false;optionsEl.innerHTML="";bar.style.width="100%";}}
+next.addEventListener("click",()=>{index++;renderQuestion()});restart.addEventListener("click",()=>{index=0;score=0;restart.hidden=true;renderQuestion()});renderQuestion();
+const foods=[["🍎","apple"],["🍌","banana"],["🍓","strawberries"],["🥕","carrots"],["🥦","broccoli"],["🥚","eggs"],["🥛","milk"],["🌽","corn"]];const selected=new Set();const foodButtons=document.getElementById("foodButtons"),plateItems=document.getElementById("plateItems"),sentence=document.getElementById("sentence");
+foods.forEach(([emoji,name])=>{const b=document.createElement("button");b.className="food-pick";b.textContent=emoji+" "+name;b.setAttribute("aria-pressed","false");b.addEventListener("click",()=>{if(selected.has(name)){selected.delete(name);b.classList.remove("selected");b.setAttribute("aria-pressed","false")}else{selected.add(name);b.classList.add("selected");b.setAttribute("aria-pressed","true")}updatePlate()});foodButtons.appendChild(b)});
+function updatePlate(){plateItems.innerHTML="";if(!selected.size){plateItems.textContent="Your plate is empty. / Tu plato está vacío.";sentence.textContent="I like ______.";return}selected.forEach(name=>{const item=foods.find(f=>f[1]===name);const span=document.createElement("span");span.style.cssText="display:inline-block;font-size:1.1rem;margin:4px;padding:5px 8px;background:white;border-radius:10px";span.textContent=item[0]+" "+name;plateItems.appendChild(span)});sentence.textContent="I like "+[...selected][0]+(selected.size===1?".":" and "+[...selected].slice(1).join(" and ")+".");}
+document.getElementById("clearPlate").addEventListener("click",()=>{selected.clear();document.querySelectorAll(".food-pick").forEach(b=>{b.classList.remove("selected");b.setAttribute("aria-pressed","false")});updatePlate()});
+</script>
+</body>
+</html>
