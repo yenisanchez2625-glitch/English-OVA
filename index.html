@@ -52,7 +52,45 @@ const quizDistractors={
 "A leaf":["A leaf","Pears","Pickle","Watermelon"]
 };
 let student="",grade="",sortResults={},selectedFood=null,quizIndex=0,quizScore=0,quizResponses=[],quizFinished=false;
-function speak(t){if(!t)return;if(!("speechSynthesis" in window)){alert("Audio is not supported in this browser.");return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.82;speechSynthesis.speak(u)}
+function speak(t){
+  if(!t)return;
+  if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
+    alert("This browser does not support spoken audio. Try opening the OVA in Google Chrome.");
+    return;
+  }
+  const synth=window.speechSynthesis;
+  synth.cancel();
+  const play=()=>{
+    const utterance=new SpeechSynthesisUtterance(t);
+    utterance.lang="en-US";
+    utterance.rate=.78;
+    utterance.pitch=1;
+    const voices=synth.getVoices();
+    const englishVoice=voices.find(v=>/^en-US$/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));
+    if(englishVoice)utterance.voice=englishVoice;
+    utterance.onerror=()=>{console.warn("Speech playback failed. Check the device's media volume and text-to-speech settings.")};
+    synth.resume();
+    synth.speak(utterance);
+  };
+  if(synth.getVoices().length){
+    play();
+  }else{
+    let finished=false;
+    const onVoices=()=>{
+      if(finished)return;
+      finished=true;
+      synth.removeEventListener("voiceschanged",onVoices);
+      play();
+    };
+    synth.addEventListener("voiceschanged",onVoices);
+    setTimeout(()=>{
+      if(finished)return;
+      finished=true;
+      synth.removeEventListener("voiceschanged",onVoices);
+      play();
+    },700);
+  }
+}
 document.getElementById("studentForm").addEventListener("submit",e=>{e.preventDefault();student=document.getElementById("studentName").value.trim();grade=document.getElementById("studentGrade").value;document.getElementById("activities").classList.remove("hidden");document.getElementById("welcome").textContent="Welcome, "+student+"! ¡Vamos a aprender!";document.getElementById("student").scrollIntoView({behavior:"smooth"});updateReport()});
 function foodVisual(f){
 if(f.en==="Plum")return '<svg class="food-svg" viewBox="0 0 64 64" role="img" aria-label="purple plum"><path d="M34 13 C49 9 58 22 54 38 C50 54 39 61 28 57 C13 53 6 39 12 25 C17 14 25 12 34 13Z" fill="#6d328e" stroke="#4c2068" stroke-width="2"/><path d="M32 15 C38 25 37 43 28 56" fill="none" stroke="#a56ac1" stroke-width="3" stroke-linecap="round"/><path d="M33 14 Q31 7 35 4" fill="none" stroke="#6b4b2a" stroke-width="3" stroke-linecap="round"/><path d="M34 10 Q45 0 54 7 Q47 17 34 10Z" fill="#4f873e" stroke="#32632a" stroke-width="1.5"/></svg>';
