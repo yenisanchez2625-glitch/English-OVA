@@ -52,44 +52,40 @@ const quizDistractors={
 "A leaf":["A leaf","Pears","Pickle","Watermelon"]
 };
 let student="",grade="",sortResults={},selectedFood=null,quizIndex=0,quizScore=0,quizResponses=[],quizFinished=false;
+let currentAudio=null;
 function speak(t){
   if(!t)return;
-  if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
-    alert("This browser does not support spoken audio. Try opening the OVA in Google Chrome.");
-    return;
-  }
-  const synth=window.speechSynthesis;
-  synth.cancel();
-  const play=()=>{
+  // First try a real hosted English audio clip; this avoids relying only on the
+  // phone's installed text-to-speech voice.
+  if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;currentAudio=null;}
+  const audioUrl="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q="+encodeURIComponent(t);
+  const audio=new Audio(audioUrl);
+  currentAudio=audio;
+  audio.preload="auto";
+  let fellBack=false;
+  const fallbackToDeviceVoice=()=>{
+    if(fellBack)return;
+    fellBack=true;
+    if(currentAudio===audio)currentAudio=null;
+    if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
+      alert("Audio could not be loaded. Check your internet connection and media volume.");
+      return;
+    }
+    const synth=window.speechSynthesis;
+    synth.cancel();
     const utterance=new SpeechSynthesisUtterance(t);
     utterance.lang="en-US";
     utterance.rate=.78;
-    utterance.pitch=1;
     const voices=synth.getVoices();
-    const englishVoice=voices.find(v=>/^en-US$/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));
-    if(englishVoice)utterance.voice=englishVoice;
-    utterance.onerror=()=>{console.warn("Speech playback failed. Check the device's media volume and text-to-speech settings.")};
+    const voice=voices.find(v=>/^en-US$/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));
+    if(voice)utterance.voice=voice;
     synth.resume();
     synth.speak(utterance);
   };
-  if(synth.getVoices().length){
-    play();
-  }else{
-    let finished=false;
-    const onVoices=()=>{
-      if(finished)return;
-      finished=true;
-      synth.removeEventListener("voiceschanged",onVoices);
-      play();
-    };
-    synth.addEventListener("voiceschanged",onVoices);
-    setTimeout(()=>{
-      if(finished)return;
-      finished=true;
-      synth.removeEventListener("voiceschanged",onVoices);
-      play();
-    },700);
-  }
+  audio.addEventListener("error",fallbackToDeviceVoice,{once:true});
+  audio.addEventListener("stalled",()=>{if(audio.currentTime===0)fallbackToDeviceVoice()},{once:true});
+  const playPromise=audio.play();
+  if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(fallbackToDeviceVoice);
 }
 document.getElementById("studentForm").addEventListener("submit",e=>{e.preventDefault();student=document.getElementById("studentName").value.trim();grade=document.getElementById("studentGrade").value;document.getElementById("activities").classList.remove("hidden");document.getElementById("welcome").textContent="Welcome, "+student+"! ¡Vamos a aprender!";document.getElementById("student").scrollIntoView({behavior:"smooth"});updateReport()});
 function foodVisual(f){
