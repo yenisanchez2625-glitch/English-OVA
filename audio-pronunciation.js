@@ -1,94 +1,90 @@
-/* Individual word pronunciation for English-OVA.
-   Prefer the device's English speech engine; use online TTS as a fallback. */
+/* Reliable word audio for English-OVA.
+   Try Google's English text-to-speech audio first; use the device voice as fallback. */
 (function () {
   "use strict";
   let currentAudio = null;
   let requestId = 0;
+  let fallbackTimer = null;
 
-  function playOnlineTTS(text, id) {
-    try {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.src = "";
-      }
-      const url = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=" +
-        encodeURIComponent(text);
-      const audio = new Audio(url);
-      currentAudio = audio;
-      audio.preload = "auto";
-      audio.onended = () => { if (currentAudio === audio) currentAudio = null; };
-      audio.onerror = () => {
-        if (currentAudio === audio) currentAudio = null;
-        if (id === requestId) {
-          alert("The audio could not play. Try the video below or check that your device has an English text-to-speech voice installed. / No se pudo reproducir el audio. Intenta con el video de abajo.");
-        }
-      };
-      const result = audio.play();
-      if (result && typeof result.catch === "function") result.catch(() => {
-        if (currentAudio === audio) currentAudio = null;
-        if (id === requestId) {
-          alert("The audio could not play. Try the video below or check your connection. / No se pudo reproducir el audio. Intenta con el video de abajo.");
-        }
-      });
-    } catch (_) {
-      if (id === requestId) alert("Audio is unavailable on this device. / El audio no está disponible en este dispositivo.");
+  function stopCurrent() {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.removeAttribute("src");
+      currentAudio.load();
+      currentAudio = null;
+    }
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    if (fallbackTimer) {
+      clearTimeout(fallbackTimer);
+      fallbackTimer = null;
     }
   }
 
-  function speakWithBrowser(text, id) {
+  function speakOnDevice(text, id) {
+    if (id !== requestId) return;
     if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
-      playOnlineTTS(text, id);
+      alert("Audio could not be played. Check your internet connection and try again. / No se pudo reproducir el audio. Revisa tu conexión e inténtalo de nuevo.");
       return;
     }
-    const synth = window.speechSynthesis;
     try {
-      synth.cancel();
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-      }
+      const synth = window.speechSynthesis;
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "en-US";
       utterance.rate = 0.78;
       utterance.pitch = 1;
-      const chooseVoice = () => {
-        if (id !== requestId) return;
-        const voices = synth.getVoices();
-        const voice = voices.find(v => /^en-US/i.test(v.lang)) ||
-                      voices.find(v => /^en-GB/i.test(v.lang)) ||
-                      voices.find(v => /^en/i.test(v.lang));
-        if (voice) utterance.voice = voice;
-        utterance.onerror = () => playOnlineTTS(text, id);
-        synth.speak(utterance);
+      const voices = synth.getVoices();
+      const voice = voices.find(v => /^en-US/i.test(v.lang)) ||
+                    voices.find(v => /^en-GB/i.test(v.lang)) ||
+                    voices.find(v => /^en/i.test(v.lang));
+      if (voice) utterance.voice = voice;
+      utterance.onerror = () => {
+        if (id === requestId) alert("Audio is unavailable. Please check your device volume and internet connection. / El audio no está disponible. Revisa el volumen y la conexión.");
       };
-      if (synth.getVoices().length) {
-        chooseVoice();
-      } else {
-        let started = false;
-        const onVoices = () => {
-          if (started) return;
-          started = true;
-          synth.removeEventListener("voiceschanged", onVoices);
-          chooseVoice();
-        };
-        synth.addEventListener("voiceschanged", onVoices);
-        window.setTimeout(() => {
-          if (!started) {
-            started = true;
-            synth.removeEventListener("voiceschanged", onVoices);
-            chooseVoice();
-          }
-        }, 900);
-      }
+      synth.speak(utterance);
     } catch (_) {
-      playOnlineTTS(text, id);
+      alert("Audio is unavailable on this device. / El audio no está disponible en este dispositivo.");
     }
+  }
+
+  function tryGoogleAudio(text, id, attempt) {
+    if (id !== requestId) return;
+    const client = attempt === 0 ? "tw-ob" : "gtx";
+    const lang = attempt === 0 ? "en-US" : "en";
+    const url = "https://translate.google.com/translate_tts?ie=UTF-8&client=" +
+      client + "&tl=" + lang + "&q=" + encodeURIComponent(text);
+    const audio = new Audio();
+    currentAudio = audio;
+    audio.preload = "auto";
+    audio.playsInline = true;
+    let advanced = false;
+    const fallback = () => {
+      if (advanced || id !== requestId) return;
+      advanced = true;
+      audio.onerror = null;
+      audio.onended = null;
+      audio.pause();
+      if (currentAudio === audio) currentAudio = null;
+      if (attempt === 0) tryGoogleAudio(text, id, 1);
+      else speakOnDevice(text, id);
+    };
+    audio.onended = () => {
+      if (currentAudio === audio) currentAudio = null;
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+    };
+    audio.onerror = fallback;
+    audio.src = url;
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(fallback);
+    }
+    fallbackTimer = setTimeout(fallback, 5000);
   }
 
   window.playOVAAudio = function (text) {
     const word = String(text || "").trim();
     if (!word) return;
     requestId += 1;
-    speakWithBrowser(word, requestId);
+    stopCurrent();
+    tryGoogleAudio(word, requestId, 0);
   };
 })();
