@@ -19,6 +19,7 @@
 <section class="section" id="gradedQuiz"><div class="wrap"><div class="eyebrow">Activity 2 • Graded quiz / Actividad calificable</div><h2>What is it in English? ⭐</h2><p class="sub">Mira la ilustración y responde: ¿Cómo se dice este alimento en inglés? Elige una de las cuatro opciones.</p><div class="card"><div class="quiztop"><strong id="quizCounter">Question 1 of 10</strong><span><strong>Score / Puntaje:</strong> <span id="quizScore">0</span>/10</span></div><div class="progress"><div class="bar" id="quizBar"></div></div><div class="quizprompt"><div><div class="quizpicture" id="quizPicture" aria-label="Food illustration">🍎</div><p class="quizSpanish" id="quizSpanish">manzana</p></div><div><h3 id="quizQuestion">What is it in English?</h3><p class="small">Choose one answer / Escoge una respuesta.</p></div></div><div class="quizoptions" id="quizOptions"></div><p class="feedback" id="quizFeedback" aria-live="polite"></p><button class="btn" id="quizNext" disabled>Next / Siguiente ➜</button><div id="quizDone" class="hidden"><h3 id="finalMessage">Quiz complete!</h3><p id="finalScore"></p><p>Download your PDF report to see every answer and feedback. Descarga el reporte para ver tus respuestas y la explicación de cada pregunta.</p><button class="btn" id="downloadPdf">Download PDF report / Descargar PDF 📄</button><button class="btn secondary" id="retryQuiz">Try again / Intentar de nuevo</button></div></div></div></section>
 <section class="section"><div class="wrap"><div class="eyebrow">My learning report</div><h2>Well done! / ¡Buen trabajo! 🎉</h2><div class="report"><p id="reportDetails">Complete the activities to build your report.</p><p class="small">El PDF incluye tu nombre, curso, nota del quiz, tus respuestas, las respuestas correctas y feedback sencillo en español e inglés.</p><button class="btn secondary" id="downloadPdfBottom">Download PDF report / Descargar PDF 📄</button></div></div></section>
 </main><footer class="footer"><div class="wrap"><strong>🐛 Look • Learn • Choose</strong><p>English learning for Grade 2</p><p>Inspired by <em>The Very Hungry Caterpillar</em> by Eric Carle.</p></div></footer>
+<script src="audio-pronunciation.js"></script>
 <script>
 const foods=[
 {e:"🍎",en:"Apple",es:"manzana",cat:"healthy"},
@@ -53,38 +54,8 @@ const quizDistractors={
 };
 let student="",grade="",sortResults={},selectedFood=null,quizIndex=0,quizScore=0,quizResponses=[],quizFinished=false;
 let currentAudio=null;
-function speak(t){
-  if(!t)return;
-  // Prefer the browser's built-in speech engine. This avoids relying on a
-  // third-party TTS URL that may be blocked or fail to load on mobile.
-  if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;currentAudio=null;}
-  if("speechSynthesis" in window && "SpeechSynthesisUtterance" in window){
-    const synth=window.speechSynthesis;
-    synth.cancel();
-    const utterance=new SpeechSynthesisUtterance(t);
-    utterance.lang="en-US";
-    utterance.rate=.82;
-    const chooseVoice=()=>{
-      const voices=synth.getVoices();
-      const voice=voices.find(v=>/^en-US/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));
-      if(voice)utterance.voice=voice;
-    };
-    chooseVoice();
-    utterance.onerror=()=>{
-      // If local speech is unavailable, try the hosted voice as a fallback.
-      const audio=new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q="+encodeURIComponent(t));
-      currentAudio=audio;
-      audio.play().catch(()=>alert("Audio could not be played. Check your internet connection and media volume."));
-    };
-    synth.resume();
-    synth.speak(utterance);
-    return;
-  }
-  // Fallback for browsers without Speech Synthesis.
-  const audio=new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q="+encodeURIComponent(t));
-  currentAudio=audio;
-  audio.play().catch(()=>alert("Audio could not be played. Check your internet connection and media volume."));
-}
+function speak(t){ if (window.playOVAAudio) window.playOVAAudio(t); else alert("Audio module is loading. Please try again."); }
+
 document.getElementById("studentForm").addEventListener("submit",e=>{e.preventDefault();student=document.getElementById("studentName").value.trim();grade=document.getElementById("studentGrade").value;document.getElementById("activities").classList.remove("hidden");document.getElementById("welcome").textContent="Welcome, "+student+"! ¡Vamos a aprender!";document.getElementById("student").scrollIntoView({behavior:"smooth"});updateReport()});
 function foodVisual(f){
 if(f.en==="Plum")return '<svg class="food-svg" viewBox="0 0 64 64" role="img" aria-label="purple plum"><path d="M34 13 C49 9 58 22 54 38 C50 54 39 61 28 57 C13 53 6 39 12 25 C17 14 25 12 34 13Z" fill="#6d328e" stroke="#4c2068" stroke-width="2"/><path d="M32 15 C38 25 37 43 28 56" fill="none" stroke="#a56ac1" stroke-width="3" stroke-linecap="round"/><path d="M33 14 Q31 7 35 4" fill="none" stroke="#6b4b2a" stroke-width="3" stroke-linecap="round"/><path d="M34 10 Q45 0 54 7 Q47 17 34 10Z" fill="#4f873e" stroke="#32632a" stroke-width="1.5"/></svg>';
