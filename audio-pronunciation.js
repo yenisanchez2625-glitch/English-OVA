@@ -1,5 +1,5 @@
-/* Reliable word audio for English-OVA.
-   Try Google's English text-to-speech audio first; use the device voice as fallback. */
+/* English word pronunciation for the OVA.
+   Start device speech directly from the user's tap; use Google TTS as backup. */
 (function () {
   "use strict";
   let currentAudio = null;
@@ -20,39 +20,13 @@
     }
   }
 
-  function speakOnDevice(text, id) {
-    if (id !== requestId) return;
-    if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
-      alert("Audio could not be played. Check your internet connection and try again. / No se pudo reproducir el audio. Revisa tu conexión e inténtalo de nuevo.");
-      return;
-    }
-    try {
-      const synth = window.speechSynthesis;
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      utterance.rate = 0.78;
-      utterance.pitch = 1;
-      const voices = synth.getVoices();
-      const voice = voices.find(v => /^en-US/i.test(v.lang)) ||
-                    voices.find(v => /^en-GB/i.test(v.lang)) ||
-                    voices.find(v => /^en/i.test(v.lang));
-      if (voice) utterance.voice = voice;
-      utterance.onerror = () => {
-        if (id === requestId) alert("Audio is unavailable. Please check your device volume and internet connection. / El audio no está disponible. Revisa el volumen y la conexión.");
-      };
-      synth.speak(utterance);
-    } catch (_) {
-      alert("Audio is unavailable on this device. / El audio no está disponible en este dispositivo.");
-    }
-  }
-
-  function tryGoogleAudio(text, id, attempt) {
+  function googleBackup(text, id, attempt) {
     if (id !== requestId) return;
     const client = attempt === 0 ? "tw-ob" : "gtx";
     const lang = attempt === 0 ? "en-US" : "en";
     const url = "https://translate.google.com/translate_tts?ie=UTF-8&client=" +
       client + "&tl=" + lang + "&q=" + encodeURIComponent(text);
-    const audio = new Audio();
+    const audio = new Audio(url);
     currentAudio = audio;
     audio.preload = "auto";
     audio.playsInline = true;
@@ -64,19 +38,16 @@
       audio.onended = null;
       audio.pause();
       if (currentAudio === audio) currentAudio = null;
-      if (attempt === 0) tryGoogleAudio(text, id, 1);
-      else speakOnDevice(text, id);
+      if (attempt === 0) googleBackup(text, id, 1);
+      else alert("Audio could not be played. Check your device volume and try again. / No se pudo reproducir el audio. Revisa el volumen e inténtalo de nuevo.");
     };
     audio.onended = () => {
       if (currentAudio === audio) currentAudio = null;
       if (fallbackTimer) clearTimeout(fallbackTimer);
     };
     audio.onerror = fallback;
-    audio.src = url;
-    const playPromise = audio.play();
-    if (playPromise && typeof playPromise.catch === "function") {
-      playPromise.catch(fallback);
-    }
+    const p = audio.play();
+    if (p && p.catch) p.catch(fallback);
     fallbackTimer = setTimeout(fallback, 5000);
   }
 
@@ -84,7 +55,37 @@
     const word = String(text || "").trim();
     if (!word) return;
     requestId += 1;
+    const id = requestId;
     stopCurrent();
-    tryGoogleAudio(word, requestId, 0);
+
+    if ("speechSynthesis" in window && "SpeechSynthesisUtterance" in window) {
+      try {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = "en-US";
+        utterance.rate = 0.78;
+        utterance.pitch = 1;
+        const voices = synth.getVoices();
+        const voice = voices.find(v => /^en-US/i.test(v.lang)) ||
+                      voices.find(v => /^en-GB/i.test(v.lang)) ||
+                      voices.find(v => /^en/i.test(v.lang));
+        if (voice) utterance.voice = voice;
+        let finished = false;
+        utterance.onstart = () => { finished = true; };
+        utterance.onend = () => { if (fallbackTimer) clearTimeout(fallbackTimer); };
+        utterance.onerror = () => {
+          if (!finished && id === requestId) googleBackup(word, id, 0);
+        };
+        synth.speak(utterance);
+        fallbackTimer = setTimeout(() => {
+          if (!finished && id === requestId) {
+            synth.cancel();
+            googleBackup(word, id, 0);
+          }
+        }, 1800);
+        return;
+      } catch (_) {}
+    }
+    googleBackup(word, id, 0);
   };
 })();
